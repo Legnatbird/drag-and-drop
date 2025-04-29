@@ -57,9 +57,35 @@ class TaskManager {
             columnsContainer.appendChild(column);
             
             const stateFilteredTasks = this.tasks.filter(task => task.state === state);
-            this.taskLists[state] = new TaskList(taskContainer, stateFilteredTasks, state);
+            this.taskLists[state] = new TaskList(taskContainer, stateFilteredTasks, state, this);
             this.taskLists[state].render();
         });
+    }
+
+    handleTaskStateChange(task) {
+        const taskIndex = this.tasks.findIndex(t => t.id === task.id);
+        if (taskIndex !== -1) {
+            this.tasks[taskIndex] = task;
+        }
+        
+        const newState = task.state;
+        if (this.taskLists[newState]) {
+            this.taskLists[newState].addTask(task);
+        }
+    }
+
+    moveTask(taskId, fromState, toState) {
+        const taskIndex = this.tasks.findIndex(task => task.id === taskId);
+        
+        if (taskIndex !== -1) {
+            const task = {...this.tasks[taskIndex]};
+            task.state = toState;
+            this.tasks[taskIndex] = task;
+            
+            this.taskLists[fromState].removeTask(taskId);
+            
+            this.taskLists[toState].addTask(task);
+        }
     }
 
     addResetButton() {
@@ -82,7 +108,7 @@ class TaskManager {
     }
 
     resetTasks() {
-        this.tasks = [...this.originalTasks];
+        this.tasks = JSON.parse(JSON.stringify(this.originalTasks));
         this.render();
     }
 }

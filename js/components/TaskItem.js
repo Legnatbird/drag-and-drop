@@ -17,6 +17,19 @@ class TaskItem {
         }
     }
 
+    getStatusLabel(state) {
+        switch(state) {
+            case 'pending':
+                return 'Pending';
+            case 'completed':
+                return 'Completed';
+            case 'in-progress':
+                return 'In Progress';
+            default:
+                return state;
+        }
+    }
+
     render() {
         const taskElement = document.createElement('div');
         taskElement.className = 'task';
@@ -28,7 +41,7 @@ class TaskItem {
             <div class="task-index">${this.index + 1}</div>
             <h2>${this.taskData.name}</h2>
             <p>${this.taskData.description}</p>
-            <p class="status ${this.getStatusClass(this.taskData.state)}">${this.taskData.state}</p>
+            <p class="status ${this.getStatusClass(this.taskData.state)}">${this.getStatusLabel(this.taskData.state)}</p>
         `;
         
         return taskElement;

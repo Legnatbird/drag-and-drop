@@ -47,6 +47,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    min-height: 50px;
 }
 
 /* Tasks */
@@ -115,13 +116,47 @@ h1 {
     font-weight: bold;
 }
 
+.empty-state {
+    color: #adb5bd;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 15px;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.task-container {
+    min-height: 200px;
+}
+
+.task-container.container-drag-over,
+.task-container:hover .empty-state {
+    background-color: rgba(0, 123, 255, 0.1);
+    border: 2px dashed #007bff;
+}
+
+.task-column.drop-target {
+    background-color: rgba(0, 123, 255, 0.1);
+    border: 2px dashed #007bff;
+}
+
 .task.dragging {
     opacity: 0.5;
+    transform: scale(0.95);
     cursor: grabbing;
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+    z-index: 1000;
 }
 
 .task.drag-over {
     border: 2px dashed #007bff;
+    background-color: rgba(0, 123, 255, 0.05);
 }
 
 /* Button styles */
