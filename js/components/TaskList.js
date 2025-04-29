@@ -2,9 +2,10 @@ import TaskItem from './TaskItem.js';
 import DragDropController from '../utils/DragDropController.js';
 
 class TaskList {
-    constructor(containerElement, tasks) {
+    constructor(containerElement, tasks, state) {
         this.containerElement = containerElement;
         this.tasks = tasks;
+        this.state = state;
         this.dragDropController = new DragDropController(this);
     }
 
@@ -14,6 +15,8 @@ class TaskList {
         this.tasks.forEach((task, index) => {
             const taskItem = new TaskItem(task, index);
             const taskElement = taskItem.render();
+            
+            taskElement.dataset.state = this.state;
             
             this.dragDropController.attachDragEvents(taskElement);
             

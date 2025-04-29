@@ -6,10 +6,12 @@ class TaskManager {
         this.rootElement = rootElement;
         this.originalTasks = [...tasks];
         this.tasks = [...tasks];
-        this.taskList = null;
+        this.taskLists = {};
+        
+        this.initializeUI();
     }
-
-    render() {
+    
+    initializeUI() {
         if (!this.rootElement.querySelector('h1')) {
             const header = document.createElement('h1');
             header.textContent = 'Task Manager';
@@ -17,22 +19,53 @@ class TaskManager {
         }
 
         this.addResetButton();
-
-        let taskContainer = this.rootElement.querySelector('#task-container');
-        if (!taskContainer) {
-            taskContainer = document.createElement('div');
-            taskContainer.id = 'task-container';
-            this.rootElement.appendChild(taskContainer);
+        
+        let columnsContainer = this.rootElement.querySelector('#columns-container');
+        if (!columnsContainer) {
+            columnsContainer = document.createElement('div');
+            columnsContainer.id = 'columns-container';
+            this.rootElement.appendChild(columnsContainer);
         }
+    }
 
-        this.taskList = new TaskList(taskContainer, this.tasks);
-        this.taskList.render();
+    render() {
+        const columnsContainer = this.rootElement.querySelector('#columns-container');
+        columnsContainer.innerHTML = '';
+
+        const states = ['pending', 'in-progress', 'completed'];
+        const stateTitles = {
+            'pending': 'Pending',
+            'in-progress': 'In Progress',
+            'completed': 'Completed'
+        };
+
+        states.forEach(state => {
+            const column = document.createElement('div');
+            column.className = 'task-column';
+            column.id = `${state}-column`;
+            
+            const columnTitle = document.createElement('h2');
+            columnTitle.className = 'column-title';
+            columnTitle.textContent = stateTitles[state];
+            column.appendChild(columnTitle);
+            
+            const taskContainer = document.createElement('div');
+            taskContainer.className = 'task-container';
+            taskContainer.id = `${state}-tasks`;
+            column.appendChild(taskContainer);
+            
+            columnsContainer.appendChild(column);
+            
+            const stateFilteredTasks = this.tasks.filter(task => task.state === state);
+            this.taskLists[state] = new TaskList(taskContainer, stateFilteredTasks, state);
+            this.taskLists[state].render();
+        });
     }
 
     addResetButton() {
         const existingButton = this.rootElement.querySelector('#reset-button');
         if (existingButton) {
-            existingButton.remove();
+            return;
         }
 
         const buttonContainer = document.createElement('div');
@@ -50,9 +83,7 @@ class TaskManager {
 
     resetTasks() {
         this.tasks = [...this.originalTasks];
-        if (this.taskList) {
-            this.taskList.updateTasks(this.tasks);
-        }
+        this.render();
     }
 }
 

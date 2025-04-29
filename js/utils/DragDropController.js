@@ -18,16 +18,31 @@ class DragDropController {
         this.draggedTask.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', this.draggedTask.dataset.index);
+        e.dataTransfer.setData('task-state', this.draggedTask.dataset.state);
     }
 
     handleDragOver(e) {
         e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
+
+        const draggedState = this.draggedTask.dataset.state;
+        const targetState = e.currentTarget.dataset.state;
+        
+        if (draggedState === targetState) {
+            e.dataTransfer.dropEffect = 'move';
+        } else {
+            e.dataTransfer.dropEffect = 'none';
+        }
+        
         return false;
     }
 
     handleDragEnter(e) {
-        e.currentTarget.classList.add('drag-over');
+        const draggedState = this.draggedTask.dataset.state;
+        const targetState = e.currentTarget.dataset.state;
+        
+        if (draggedState === targetState) {
+            e.currentTarget.classList.add('drag-over');
+        }
     }
 
     handleDragLeave(e) {
@@ -39,6 +54,13 @@ class DragDropController {
         e.preventDefault();
         
         const target = e.currentTarget;
+        
+        const draggedState = this.draggedTask.dataset.state;
+        const targetState = target.dataset.state;
+        
+        if (draggedState !== targetState) {
+            return false;
+        }
         
         if (this.draggedTask !== target) {
             const fromIndex = parseInt(this.draggedTask.dataset.index);
